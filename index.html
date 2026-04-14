@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        html {
+            background-color: #222;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="roomSelector">
+    <input type="submit" id="proceedButton" onclick="proceed()">
+</body>
+<script>
+    
+    function proceed() {
+        let id = document.getElementById("roomSelector").value
+        console.log(id)
+        localStorage.setItem('id',id)
+
+        window.location.href = "room.html"
+    }
+</script>
+
+</html>

@@ -1,5 +1,5 @@
 const APP_ID = "79f80c0390e14a06adf7d98e3a0056af";
-const CHANNEL = "main-room"; // Everyone needs the same channel name to see each other
+const CHANNEL = localStorage.getItem('id');
 
 const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 

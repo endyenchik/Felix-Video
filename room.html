@@ -3,15 +3,46 @@
 <head>
     <title>Group Video Chat</title>
     <style>
-        #video-container { display: flex; flex-wrap: wrap; gap: 10px; }
-        .video-player { width: 300px; height: 225px; background: #222; border-radius: 8px; }
+        html {
+            background-color: #222;
+        }
+        #video-container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px;
+            border-radius: 8px;  
+        }
+        .video-player { 
+            width: 300px; 
+            height: 225px; 
+            background: #222; 
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative; 
+        }
+        #action-menu {
+            position: fixed;
+            bottom: 20px; /* Distance from the bottom */
+            left: 50%;
+            transform: translateX(-50%); /* Offsets the width so the CENTER of the menu is at 50% */
+            
+            /* Your existing styles */
+            background: #383838;
+            width: 400px;
+            height: 50px;
+            display: flex;
+            border-radius: 8px; 
+            z-index: 1000; /* Makes sure it stays on top of video feeds */
+        }
     </style>
 </head>
 <body>
-    <h2>Group Call</h2>
     <div id="video-container">
         <div id="local-player" class="video-player"></div>
-        </div>
+    </div>
+    <div id="action-menu">
+
+    </div>
 
     <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
     <script src="script.js"></script>

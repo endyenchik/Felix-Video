@@ -5,11 +5,47 @@
         html {
             background-color: #222;
         }
+        
+        #menu {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%); 
+            
+            background: #383838;
+            width: 300px;  /* Narrower width looks better for vertical menus */
+            height: auto;  /* Let the height grow based on content */
+            padding: 20px;
+            display: flex;
+            
+            /* THE FIX: Switch from row to column */
+            flex-direction: column; 
+            
+            /* Space between the input and the button */
+            gap: 15px; 
+            
+            border-radius: 8px; 
+            z-index: 1000;
+            color: white;
+        }
+
+        #menu input {
+            width: 100%; /* Make them fill the full width of the menu */
+            height: 40px;
+            border-radius: 4px;
+            border: none;
+            padding: 5px;
+            box-sizing: border-box; /* Ensures padding doesn't break the width */
+        }
+
     </style>
 </head>
 <body>
-    <input type="text" id="roomSelector">
-    <input type="submit" id="proceedButton" onclick="proceed()">
+    <div id="menu">
+        <h2>Enter the rooms ID:</h2>
+        <input type="text" id="roomSelector" value="Enter the id">
+        <input type="submit" id="proceedButton" onclick="proceed()">
+    </div>
 </body>
 <script>
     

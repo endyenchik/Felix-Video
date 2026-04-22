@@ -37,19 +37,15 @@ async function startCall() {
         }
     });
 
-    // FIX: Keep the spot reserved when they stop their video
     client.on("user-unpublished", (user, mediaType) => {
         if (mediaType === "video") {
-            // Find their existing "seat"
             const remotePlayer = document.getElementById(user.uid);
-            
             if (remotePlayer) {
-                // This stops the video rendering, revealing the black background behind it
-                remotePlayer.innerHTML = "<div style='color: white; backgroundn-color: black;'>Camera Off</div>";
+                // Keep the div, but show the placeholder text
+                // The black background comes from your CSS .video-player class
+                remotePlayer.innerHTML = "<div style='color: #777; font-family: sans-serif;'>Camera Off</div>";
             }
-            console.log(`User ${user.uid} turned off camera. Black square placeholder active.`);
         }
-        
     });
 
     // Only remove the container when they actually leave the session

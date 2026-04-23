@@ -76,6 +76,7 @@ async function toggleVideo() {
     document.getElementById("video-btn").innerText = isVideoMuted ? "Start Video" : "Stop Video";
 }
 
-// ... other functions (toggleMic, etc) stay the same
+document.getElementById("video-btn").onclick = toggleVideo;
+document.getElementById("mic-btn").onclick = toggleMic;
 
 startCall();

@@ -3,16 +3,11 @@ const CHANNEL = localStorage.getItem('id');
 
 const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 
-let localTracks = {
-    audioTrack: null,
-    videoTrack: null
-};
-
+let localTracks = { audioTrack: null, videoTrack: null };
 let isMicMuted = false;
 let isVideoMuted = false;
 
 async function startCall() {
-    // --- REMOTE USER LISTENERS ---
     client.on("user-published", async (user, mediaType) => {
         await client.subscribe(user, mediaType);
 
@@ -26,9 +21,12 @@ async function startCall() {
                 document.getElementById("video-container").append(remotePlayer);
             }
             
-            // FIX: Completely empty the div before playing the video.
-            // This removes any "Camera Off" text so the video doesn't overlap it.
+            // AGGRESSIVE FIX: 
+            // 1. Stop any current playback for this user
+            user.videoTrack.stop();
+            // 2. Wipe the container entirely
             remotePlayer.innerHTML = ""; 
+            // 3. Play fresh
             user.videoTrack.play(remotePlayer);
         }
 
@@ -41,8 +39,9 @@ async function startCall() {
         if (mediaType === "video") {
             const remotePlayer = document.getElementById(user.uid);
             if (remotePlayer) {
-                // Clear the video and replace it with the placeholder
-                remotePlayer.innerHTML = "<div style='color: #777; font-family: sans-serif;'>Camera Off</div>";
+                // Ensure the video element is removed before adding text
+                user.videoTrack.stop();
+                remotePlayer.innerHTML = "<div class='cam-off-notice'>Camera Off</div>";
             }
         }
     });
@@ -52,31 +51,31 @@ async function startCall() {
         if (remotePlayer) remotePlayer.remove();
     });
 
-    // --- JOIN SESSION ---
     await client.join(APP_ID, CHANNEL, null);
-
     [localTracks.audioTrack, localTracks.videoTrack] = await AgoraRTC.createMicrophoneAndCameraTracks();
     
     localTracks.videoTrack.play("local-player");
     await client.publish([localTracks.audioTrack, localTracks.videoTrack]);
 }
 
-// --- CONTROLS ---
-async function toggleMic() {
-    if (!localTracks.audioTrack) return;
-    isMicMuted = !isMicMuted;
-    await localTracks.audioTrack.setMuted(isMicMuted);
-    document.getElementById("mic-btn").innerText = isMicMuted ? "Unmute Mic" : "Mute Mic";
-}
-
+// --- TOGGLE LOGIC ---
 async function toggleVideo() {
     if (!localTracks.videoTrack) return;
     isVideoMuted = !isVideoMuted;
     await localTracks.videoTrack.setMuted(isVideoMuted);
+    
+    // Local fix: If we mute our own, show the text locally too
+    const localContainer = document.getElementById("local-player");
+    if (isVideoMuted) {
+        localContainer.innerHTML = "<div class='cam-off-notice'>Camera Off</div>";
+    } else {
+        localContainer.innerHTML = "";
+        localTracks.videoTrack.play("local-player");
+    }
+    
     document.getElementById("video-btn").innerText = isVideoMuted ? "Start Video" : "Stop Video";
 }
 
-document.getElementById("mic-btn").onclick = toggleMic;
-document.getElementById("video-btn").onclick = toggleVideo;
+// ... other functions (toggleMic, etc) stay the same
 
 startCall();

@@ -46,6 +46,7 @@ async function startCall() {
                 remotePlayer.innerHTML = "<div style='color: #777; font-family: sans-serif;'>Camera Off</div>";
             }
         }
+        remotePlayer.innerHTML = ""
     });
 
     // Only remove the container when they actually leave the session

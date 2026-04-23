@@ -1,4 +1,4 @@
-const APP_ID = "79f80c0390e14a06adf7d98e3a0056af";
+const APP_ID = "2bb254f4f40940dc945729ec63a55209";
 const CHANNEL = localStorage.getItem('id');
 
 const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });

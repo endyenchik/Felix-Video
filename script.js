@@ -65,6 +65,12 @@ async function toggleMic() {
     document.getElementById("mic-btn").innerText = isMicMuted ? "Unmute Mic" : "Mute Mic";
 }
 
+async function toggleMic() {
+    if (!localTracks.audioTrack) return;
+    isMicMuted = !isMicMuted;
+    await localTracks.audioTrack.setMuted(isMicMuted);
+    document.getElementById("mic-btn").innerText = isMicMuted ? "Unmute Mic" : "Mute Mic";
+}
 
 async function toggleVideo() {
     if (!localTracks.videoTrack) return;

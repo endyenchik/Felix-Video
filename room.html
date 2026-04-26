@@ -6,26 +6,30 @@
         html {
             background-color: #222;
         }
-        #video-container { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 10px;
-            border-radius: 8px;  
-        }
-        .video-player {
-            width: 300px; 
-            height: 225px; 
-            background-color: #000; /* This creates the "Black Square" */
-            border: 1px solid #333; /* Optional: adds a subtle edge */
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative; 
+        #video-container {
+            display: flex;       /* This turns on the flexible layout */
+            flex-wrap: wrap;    /* This allows videos to wrap to the next row ONLY when space runs out */
+            flex-direction: row; /* This forces them to fill left-to-right first */
             
-            /* These two lines center your 'Camera Off' text inside the square */
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            justify-content: center; /* Centers the videos horizontally */
+            align-content: center;   /* Centers the videos vertically */
+            
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            margin: 0;
+            overflow: hidden;
         }
+
+        .video-player {
+            /* Ensure there are no margins pushing elements away */
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; 
+            position: relative;
+            background-color: #1a1a1a;
+            border: 1px solid #333; /* Optional: adds a small gap between videos */
+        }   
         #action-menu {
             position: fixed;
             bottom: 20px; /* Distance from the bottom */

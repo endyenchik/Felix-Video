@@ -7,6 +7,58 @@ let localTracks = { audioTrack: null, videoTrack: null };
 let isMicMuted = false;
 let isVideoMuted = false;
 
+function updateParticipantCount() {
+    const totalPeople = client.remoteUsers.length + 1;
+    
+    const countDisplay = document.getElementById('participant-count');
+    if (countDisplay) {
+        countDisplay.innerText = `People in call: ${totalPeople}`;
+    }
+    
+    // Pass the count directly to the resize function
+    videoResize(totalPeople);
+}
+
+function videoResize(totalPeople) {
+    // 1. Grab the elements INSIDE the function to avoid ReferenceErrors
+    const windows = document.getElementsByClassName("video-player");
+    
+    // If there are no windows yet, just stop
+    if (windows.length === 0) return;
+
+    let w, h;
+
+    // 2. Logic (with fixed typos)
+    if (totalPeople <= 1) {
+        w = window.innerWidth + 'px';
+        h = window.innerHeight + 'px';
+    } else if (totalPeople <= 2) {
+        w = (window.innerWidth / 2) + 'px';
+        h = window.innerHeight + 'px';
+    } else if (totalPeople <= 4) {
+        w = (window.innerWidth / 2) + 'px';
+        h = (window.innerHeight / 2) + 'px';
+    } else if (totalPeople <= 6) {
+        w = (window.innerWidth / 3) + 'px';
+        h = (window.innerHeight / 2) + 'px';
+    } else if (totalPeople <= 8) {
+        w = (window.innerWidth / 4) + 'px';
+        h = (window.innerHeight / 2) + 'px';
+    } else if (totalPeople <= 12) {
+        w = (window.innerWidth / 4) + 'px';
+        h = (window.innerHeight / 3) + 'px';
+    } else {
+        w = (window.innerWidth / 5) + 'px';
+        h = (window.innerHeight / 3) + 'px';
+    }
+
+    // 3. Apply to all windows in the collection
+    for (let i = 0; i < windows.length; i++) {
+        windows[i].style.width = w;
+        windows[i].style.height = h;
+    }
+}
+
 async function startCall() {
     client.on("user-published", async (user, mediaType) => {
         await client.subscribe(user, mediaType);
@@ -33,6 +85,7 @@ async function startCall() {
         if (mediaType === "audio") {
             user.audioTrack.play();
         }
+        updateParticipantCount();
     });
 
     client.on("user-unpublished", (user, mediaType) => {
@@ -49,6 +102,7 @@ async function startCall() {
     client.on("user-left", (user) => {
         const remotePlayer = document.getElementById(user.uid);
         if (remotePlayer) remotePlayer.remove();
+        updateParticipantCount();
     });
 
     await client.join(APP_ID, CHANNEL, null);
@@ -56,6 +110,8 @@ async function startCall() {
     
     localTracks.videoTrack.play("local-player");
     await client.publish([localTracks.audioTrack, localTracks.videoTrack]);
+
+    updateParticipantCount();
 }
 
 async function toggleMic() {
@@ -82,7 +138,13 @@ async function toggleVideo() {
     document.getElementById("video-btn").innerText = isVideoMuted ? "Start Video" : "Stop Video";
 }
 
+
 document.getElementById("video-btn").onclick = toggleVideo;
 document.getElementById("mic-btn").onclick = toggleMic;
 
 startCall();
+
+window.addEventListener('resize', () => {
+    const totalPeople = client.remoteUsers.length + 1;
+    videoResize(totalPeople);
+});

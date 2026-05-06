@@ -1,58 +1,142 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>FelixVideo</title>
     <style>
-        html {
+        /* 1. Center everything on the page using the Body */
+        body {
             background-color: #222;
-            font-family: Sans-serif
+            font-family: Sans-serif;
+            margin: 0;
+            height: 100vh; /* Full screen height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Vertical center */
+            align-items: center;     /* Horizontal center */
+            color: snow;
         }
         
+        /* 2. Group the title and phrase */
+        #title {
+            text-align: center;
+            margin-bottom: 20px; /* Space between text and menu */
+        }
+        
+        #title h1 {
+            font-size: 60px;
+            margin: 0;
+        }
+        
+        #title p {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* 3. The Menu box */
         #menu {
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%); 
-            
             background: #383838;
-            width: 300px;  /* Narrower width looks better for vertical menus */
-            height: auto;  /* Let the height grow based on content */
+            width: 300px; 
             padding: 20px;
             display: flex;
-            
-            /* THE FIX: Switch from row to column */
             flex-direction: column; 
-            
-            /* Space between the input and the button */
             gap: 15px; 
-            
             border-radius: 8px; 
-            z-index: 1000;
-            color: white;
         }
 
         #menu input {
-            width: 100%; /* Make them fill the full width of the menu */
             height: 40px;
             border-radius: 4px;
             border: none;
             padding: 5px;
-            box-sizing: border-box; /* Ensures padding doesn't break the width */
-        }
-        #proceedButton {
-            background-color: blue
+            box-sizing: border-box;
         }
 
+        #proceedButton {
+            background-color: cornflowerblue;
+            color: snow;
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
+    <div id = "title">
+        <h1>Felix Video</h1>
+        <p id="greeting">the most simple video chatting website there is</p>
+    </div>
+    
     <div id="menu">
-        <h2>Enter the rooms ID:</h2>
+        <h2>Enter the room ID:</h2>
         <input type="text" id="roomSelector" placeholder="Enter the id">
         <input type="submit" id="proceedButton" value="Join Call" onclick="proceed()">
     </div>
 </body>
 <script>
-    
+    let phrases = [
+        "ready to talk?",
+        "don't rush it",
+        "everything is gonna be alraight",
+        "I named this website after a certain character in my favorite isekai",
+        ":3",
+        "plese enjoy your time here",
+        '"test_text"',
+        "also play Zoom",
+        "no animals were hurt while creating this",
+        "functionality > design",
+        "yes",
+        "hope you have succsesful chat",
+        "AI is good only when it helps you, rather than replacing you",
+        "Fiat Multipla was actually good all this time",
+        "swearing won't make you look cooler",
+        "unix for my life",
+        "this function was inspired by Minecraft",
+        "Teto word of the day! Chatting!",
+        "If the whole world chooses to stand against me, I will fight like I always had!",
+        "I won't give you up, nor let you down",
+        "I guess I have too much time on my hands, huh",
+        "Let's larp",
+        "Just this once..",
+        "Larp stands for Live Action Roleplay",
+        "I am really looking forward to the bright future, and you should too",
+        "If I had a personal cat, I would name it either Felix or Papyrus",
+        "Royal Guard!",
+        "User, do you even have a human heart?",
+        "I learned that drinking too much soda is bad for you in the worst way possible...",
+        "Guys, hear me out...",
+        "Follow the train, CJ",
+        "So far, so good",
+        "My, my, what an unexpected visitor!",
+        "At some point I thought that in the UK people had to drink tea at 6 p.m no matter what.",
+        "If your name is Jane, than you are way too early...",
+        "Is this a some kind of video chat, Felix?",
+        "Get the hold of yourself!",
+        "Long before time had a name, the four spinjitsu masters...",
+        "The words on the phrases[] array take more space than the code for this page itself",
+        "I am sure having fun typing this",
+        "asoidja;sodhap;fhwpe;uhdp;aiwhdp;asdhfapsifuyawpiurhqa;wfrpgaw;irghfp;wieghfapwiuw",
+        "meow",
+        "But nobody came...",
+        "Crazy? I was crazy once!",
+        "If programming is your strenght, what are you without it?",
+        "When I write something down here, I feel like I did genuine work",
+        "I want to get a Renault Twingo and travel all around Africa and Asia one day",
+        "Be aware of the didgital footprint!",
+        '"Well folks from Plano Texas told me that my project is cool, so give me the first place already!"'
+    ]
+
+    let random    
+    function randomPhrase () {
+        let past_phrase = localStorage.getItem('past_phrase')
+        random = phrases[Math.floor(Math.random() * phrases.length)]
+        if (random === past_phrase) {
+            randomPhrase()
+        }
+        else {
+            localStorage.setItem('past_phrase',random)
+            document.getElementById("greeting").textContent = random
+        }
+    }
+    randomPhrase()
     function proceed() {
         let id = document.getElementById("roomSelector").value
         console.log(id)

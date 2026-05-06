@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<meta charset="UTF-8">
 <html>
 <head>
     <title>Group Video Chat</title>
@@ -44,13 +45,35 @@
             border-radius: 8px; 
             z-index: 1000; /* Makes sure it stays on top of video feeds */
         }
+        #soundList {
+            position: fixed;
+            bottom: 80px; /* Distance from the bottom */
+            left: 50%;
+            transform: translateX(-50%); /* Offsets the width so the CENTER of the menu is at 50% */
+            margin-left: -60px;
+            justify-content: center;
+
+            background: #383838;
+            width: 200px;
+            height: 50px;
+            display: flex;
+            border-radius: 8px; 
+            z-index: 1000; /* Makes sure it stays on top of video feeds */
+            display: none;
+            flex-direction: row;
+            gap: 10px
+        }
+        #soundList p {
+            cursor: pointer;
+        }
         .button {
-            background-color: red;
+            background-color: gray;
             height: 40px;
             width: 50px;
             border-radius: 8px;
             margin-left: 5px;
             margin-top: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -59,8 +82,17 @@
         <div id="local-player" class="video-player"></div>
     </div>
     <div id="action-menu">
-        <button id="mic-btn" class="button">Mute Mic</button>
+        <button id="mic-btn" class="button"><img src='icons/micro.png' height="30" width="30"></button>
         <button id="video-btn" class="button">Stop Video</button>
+        <button id="sound-bar" class="button">Sounds</button>
+    </div>
+    <div id="soundList">
+        <p onclick="playSound('sfx/train.mp3')">🚆</p>
+        <p onclick="playSound('sfx/poop.mp3')">💩</p>
+        <p onclick="playSound('sfx/meow.mp3')">🐱</p>
+        <p onclick="playSound('sfx/my-mommy-said-no-more-skibidi-toilet.mp3')">👏</p>
+        <p onclick="playSound('sfx/correct.mp3')">✅</p>
+        <p onclick="playSound('sfx/wrong.mp3')">❌</p>
     </div>
 
 

@@ -75,15 +75,22 @@
             margin-top: 5px;
             cursor: pointer;
         }
+        #screen-player {
+            background-color: #1a1a1a;
+            border: 2px solid #00ff00;
+            position: relative;
+        }
     </style>
 </head>
 <body>
     <div id="video-container">
         <div id="local-player" class="video-player"></div>
+        <div id="screen-player" class="video-player" style="display: none;"></div>
     </div>
     <div id="action-menu">
         <button id="mic-btn" class="button"><img src='icons/micro.png' height="30" width="30"></button>
         <button id="video-btn" class="button">Stop Video</button>
+        <button id="screen-share-btn" class="button">Share Screen</button>
         <button id="sound-bar" class="button">Sounds</button>
     </div>
     <div id="soundList">

@@ -76,17 +76,46 @@
             cursor: pointer;
         }
         #screen-player {
-            background-color: #1a1a1a;
-            border: 2px solid #00ff00;
-            position: relative;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: calc(100vh - 70px);
+            background-color: #000;
+            z-index: 500;
+            border: none;
+        }
+
+        /* Small floating strip of participant thumbnails shown during screen share */
+        #pip-strip {
+            display: none;
+            position: fixed;
+            bottom: 80px; /* sits just above the action bar */
+            right: 10px;
+            z-index: 600;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        #pip-strip .video-player {
+            width: 160px;
+            height: 90px;
+            border-radius: 6px;
+            border: 1px solid #555;
+            overflow: hidden;
+            background: #1a1a1a;
         }
     </style>
 </head>
 <body>
     <div id="video-container">
-        <div id="local-player" class="video-player"></div>
-        <div id="screen-player" class="video-player" style="display: none;"></div>
+        <!-- <div id="screen-player" class="video-player" style="display: none;"></div> -->
+         <div id="local-player" class="video-player"></div>
     </div>
+    <div id="pip-strip"></div>
+    
     <div id="action-menu">
         <button id="mic-btn" class="button"><img src='icons/micro.png' height="30" width="30"></button>
         <button id="video-btn" class="button">Stop Video</button>

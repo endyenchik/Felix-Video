@@ -108,54 +108,82 @@ async function toggleVideo() {
     }
 }
 
+let screenClient = null;
+
 async function toggleScreenShare() {
     try {
         if (isScreenSharing) {
-            // Stop screen sharing
-            await client.unpublish(screenTrack);
+            await screenClient.unpublish(screenTrack);
             screenTrack.stop();
             screenTrack.close();
             screenTrack = null;
+            await screenClient.leave();
+            screenClient = null;
             isScreenSharing = false;
 
-            // Republish camera
-            await client.publish([localTracks.audioTrack, localTracks.videoTrack]);
-            if (!isVideoMuted) {
-                localTracks.videoTrack.play("local-player");
-            }
+            // Restore video container
+            const container = document.getElementById("video-container");
+            container.style.cssText = "";
+            container.innerHTML = "";
 
-            document.getElementById("screen-player").style.display = "none";
-            document.getElementById("screen-player").innerHTML = "";
+            // Re-add local player
+            const localPlayer = document.createElement("div");
+            localPlayer.id = "local-player";
+            localPlayer.className = "video-player";
+            container.appendChild(localPlayer);
 
-            const btn = document.getElementById("screen-share-btn");
-            btn.innerText = "Share Screen";
-            btn.style.backgroundColor = "gray";
-        } else {
-            // Start screen sharing
-            if (!localTracks.videoTrack) return;
-            
-            screenTrack = await AgoraRTC.createScreenVideoTrack({
-                encoderConfig: "1080p_1"
+            if (!isVideoMuted) localTracks.videoTrack.play("local-player");
+
+            // Re-add remote players
+            client.remoteUsers.forEach(user => {
+                if (user.videoTrack) {
+                    const remotePlayer = document.createElement("div");
+                    remotePlayer.id = `player-${user.uid}`;
+                    remotePlayer.className = "video-player";
+                    container.appendChild(remotePlayer);
+                    user.videoTrack.play(remotePlayer);
+                }
             });
 
-            // Unpublish camera, publish screen
-            await client.unpublish(localTracks.videoTrack);
-            await client.publish(screenTrack);
-            
+            document.getElementById("screen-share-btn").innerText = "Share Screen";
+            document.getElementById("screen-share-btn").style.backgroundColor = "gray";
+            updateParticipantCount();
+        } else {
+            if (!localTracks.videoTrack) return;
+
+            const stream = await navigator.mediaDevices.getDisplayMedia({
+                video: { displaySurface: "monitor" },
+                audio: false
+            });
+            const rawTrack = stream.getVideoTracks()[0];
+            screenTrack = AgoraRTC.createCustomVideoTrack({ mediaStreamTrack: rawTrack });
+            screenClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+            await screenClient.join(APP_ID, CHANNEL, null, 1);
+            await screenClient.publish(screenTrack);
+
+            const container = document.getElementById("video-container");
+            container.innerHTML = "";
+            container.style.cssText = "width: 100vw; height: calc(100vh - 70px); display: block; background: #000;";
+
+            const screenDiv = document.createElement("div");
+            screenDiv.id = "screen-player";
+            screenDiv.style.cssText = "width: 100%; height: 100%;";
+            container.appendChild(screenDiv);
+
+            // Play AFTER the div is in the DOM
+            await new Promise(resolve => setTimeout(resolve, 100));
             screenTrack.play("screen-player");
-            document.getElementById("screen-player").style.display = "block";
+            setTimeout(() => {
+                const agDiv = document.querySelector("#screen-player > div");
+                if (agDiv) agDiv.style.backgroundColor = "transparent";
+            }, 200);
+
             isScreenSharing = true;
-            isVideoMuted = false;
+            document.getElementById("screen-share-btn").innerText = "Stop Sharing";
+            document.getElementById("screen-share-btn").style.backgroundColor = "green";
 
-            const btn = document.getElementById("screen-share-btn");
-            btn.innerText = "Stop Sharing";
-            btn.style.backgroundColor = "green";
-
-            // Handle screen share stop (user clicks stop in browser dialog)
             screenTrack.on("track-ended", async () => {
-                if (isScreenSharing) {
-                    await toggleScreenShare();
-                }
+                if (isScreenSharing) await toggleScreenShare();
             });
         }
     } catch (e) {
@@ -200,38 +228,39 @@ async function startCall() {
         await client.subscribe(user, mediaType);
 
         if (mediaType === "video") {
-            // Check if this is a screen share (second video from same user)
-            const isScreenShare = remoteScreenTracks[user.uid] !== undefined;
-            const windowId = isScreenShare ? `${user.uid}-screen` : user.uid;
-            const className = isScreenShare ? "video-player" : "video-player";
-            
-            let remotePlayer = document.getElementById(windowId);
-            if (!remotePlayer) {
-                remotePlayer = document.createElement("div");
-                remotePlayer.id = windowId;
-                remotePlayer.className = className;
-                if (isScreenShare) {
-                    remotePlayer.style.border = "2px solid #00ff00"; // Green border for screen share
-                }
-                document.getElementById("video-container").append(remotePlayer);
+            const track = user.videoTrack;
+
+            if (user.uid === 1) {
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                const container = document.getElementById("video-container");
+                container.innerHTML = "";
+                container.style.cssText = "width: 100vw; height: calc(100vh - 70px); display: block; background: #000;";
+
+                const video = document.createElement("video");
+                video.autoplay = true;
+                video.playsInline = true;
+                video.style.cssText = "width: 100%; height: 100%; object-fit: contain;";
+                video.srcObject = new MediaStream([track.getMediaStreamTrack()]);
+                container.appendChild(video);
+                video.play();
             }
-            remotePlayer.innerHTML = ""; 
-            user.videoTrack.play(remotePlayer);
-            
-            // Track this as a screen share if it's the second video
-            if (isScreenShare) {
-                remoteScreenTracks[user.uid] = windowId;
-            } else {
-                remoteScreenTracks[user.uid] = false; // Mark that we have their camera
+            else {
+                let remotePlayer = document.getElementById(`player-${user.uid}`);
+                if (!remotePlayer) {
+                    remotePlayer = document.createElement("div");
+                    remotePlayer.id = `player-${user.uid}`;
+                    remotePlayer.className = "video-player";
+                    document.getElementById("video-container").append(remotePlayer);
+                }
+                remotePlayer.innerHTML = "";
+                track.play(remotePlayer);
             }
         }
 
-        if (mediaType === "audio") {
-            user.audioTrack.play();
-        }
+        if (mediaType === "audio") user.audioTrack.play();
         updateParticipantCount();
     });
-
     // Handle remote users muting/unmuting
     client.on("user-unpublished", (user, mediaType) => {
         if (mediaType === "video") {
@@ -245,7 +274,7 @@ async function startCall() {
                 delete remoteScreenTracks[user.uid];
             } else {
                 // This is the camera, show camera off
-                const remotePlayer = document.getElementById(user.uid);
+                const remotePlayer = document.getElementById(`player-${user.uid}`);
                 if (remotePlayer) {
                     remotePlayer.innerHTML = "<div class='cam-off-notice'>Camera Off</div>";
                 }
@@ -255,18 +284,41 @@ async function startCall() {
 
     // Handle users leaving
     client.on("user-left", (user) => {
-        const remotePlayer = document.getElementById(user.uid);
+        if (user.uid === 1) {
+            const container = document.getElementById("video-container");
+            container.innerHTML = "";
+            container.style.cssText = "";
+
+            const localPlayer = document.createElement("div");
+            localPlayer.id = "local-player";
+            localPlayer.className = "video-player";
+            container.appendChild(localPlayer);
+
+            if (!isVideoMuted) localTracks.videoTrack.play("local-player");
+
+            // Small delay to let Agora settle before replaying remote tracks
+            setTimeout(() => {
+                client.remoteUsers.forEach(u => {
+                    if (u.videoTrack && u.uid !== 1) {
+                        let remotePlayer = document.getElementById(`player-${u.uid}`);
+                        if (!remotePlayer) {
+                            remotePlayer = document.createElement("div");
+                            remotePlayer.id = `player-${u.uid}`;
+                            remotePlayer.className = "video-player";
+                            container.appendChild(remotePlayer);
+                        }
+                        u.videoTrack.play(remotePlayer);
+                    }
+                });
+                updateParticipantCount();
+            }, 500);
+
+            return;
+        }
+        const remotePlayer = document.getElementById(`player-${user.uid}`);
         if (remotePlayer) remotePlayer.remove();
-        
-        // Also remove screen share window if exists
-        const screenWindowId = `${user.uid}-screen`;
-        const screenPlayer = document.getElementById(screenWindowId);
-        if (screenPlayer) screenPlayer.remove();
-        
-        delete remoteScreenTracks[user.uid];
         updateParticipantCount();
     });
-
     // Join and create local tracks
     await client.join(APP_ID, CHANNEL, null);
     [localTracks.audioTrack, localTracks.videoTrack] = await AgoraRTC.createMicrophoneAndCameraTracks();

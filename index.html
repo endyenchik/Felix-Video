@@ -66,8 +66,10 @@
     </div>
     
     <div id="menu">
+        <h2>Enter your name:</h2>
+        <input type="text" id="nameSelector" placeholder="Enter your name">
         <h2>Enter the room ID:</h2>
-        <input type="text" id="roomSelector" placeholder="Enter the id">
+        <input type="text" id="roomSelector" placeholder="Enter the room ID">
         <input type="submit" id="proceedButton" value="Join Call" onclick="proceed()">
     </div>
 </body>
@@ -138,10 +140,11 @@
     }
     randomPhrase()
     function proceed() {
+        let name = document.getElementById("nameSelector").value
         let id = document.getElementById("roomSelector").value
         console.log(id)
         localStorage.setItem('id',id)
-
+        localStorage.setItem('name',name)
         window.location.href = "room.html"
     }
 </script>

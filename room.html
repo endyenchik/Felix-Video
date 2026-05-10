@@ -54,7 +54,7 @@
             justify-content: center;
 
             background: #383838;
-            width: 200px;
+            width: 250px;
             height: 50px;
             display: flex;
             border-radius: 8px; 
@@ -107,6 +107,19 @@
             overflow: hidden;
             background: #1a1a1a;
         }
+        .name-tag {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 10;
+            font-family: sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -118,21 +131,24 @@
     
     <div id="action-menu">
         <button id="mic-btn" class="button"><img src='icons/micro.png' height="30" width="30"></button>
-        <button id="video-btn" class="button">Stop Video</button>
-        <button id="screen-share-btn" class="button">Share Screen</button>
+        <button id="video-btn" class="button"><img src='icons/cam-on.png' height="30" width="30"></button>
         <button id="sound-bar" class="button">Sounds</button>
+        <button id="screen-share-btn" class="button"><img src='icons/screen-share.png' height="30" width="30"></button>
     </div>
     <div id="soundList">
         <p onclick="playSound('sfx/train.mp3')">🚆</p>
         <p onclick="playSound('sfx/poop.mp3')">💩</p>
         <p onclick="playSound('sfx/meow.mp3')">🐱</p>
-        <p onclick="playSound('sfx/my-mommy-said-no-more-skibidi-toilet.mp3')">👏</p>
+        <p onclick="playSound('sfx/explosion.mp3')">💥</p>
         <p onclick="playSound('sfx/correct.mp3')">✅</p>
         <p onclick="playSound('sfx/wrong.mp3')">❌</p>
+        <p onclick="playSound('sfx/hamburger.mp3')">🍔</p>
+        <p onclick="playSound('sfx/door.mp3')">🚪</p>
     </div>
 
 
 </body>
 <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 </html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+<head>
+    <style>
+        body {
+            background-color: #222;
+            font-family: Sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: snow;
+        }
+        #videoWindow {
+            background: #383838;
+            width: 700px; 
+            height: 400px;
+            display: flex;
+            flex-direction: row; 
+            gap: 5px; 
+            border-radius: 8px;
+            text-align: center;
+            justify-content: center;
+            align-items: flex-end;
+            bottom: 5px;
+            position: relative;
+        }
+        #preview {
+            position: absolute;
+            width: 700px;
+            height: 400px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        .button {
+            background-color: gray;
+            height: 40px;
+            width: 50px;
+            border-radius: 8px;
+            margin-left: 5px;
+            margin-top: 5px;
+            bottom: 0px;
+            cursor: pointer;
+            margin-bottom: 5px;
+            z-index: 1000;
+        }
+        #inputBox{
+            margin-top: 10px;
+            background-color: #383838;
+            height: 170px;
+            width: 200px;
+            border-radius: 4px;
+            position: relative;
+            flex-direction: column;
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+        #proceedButton {
+            margin-top: 10px;
+            background-color: cornflowerblue;
+            color: snow;
+            cursor: pointer;
+            font-weight: bold;
+            height: 40px;
+            width: 200px;
+            border-radius: 4px;
+            border: none;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        #nameSelector {
+            margin-top: 10px;
+            height: 40px;
+            width: 200px;
+            border-radius: 4px;
+            border: none;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div id="videoWindow">
+        <video id="preview" autoplay playsinline muted></video>
+        <button id="mic-btn" class="button"><img src='icons/micro.png' height="30" width="30"></button>
+        <button id="video-btn" class="button"><img src='icons/cam-on.png' height="30" width="30"></button>
+    </div>
+    <div id="inputBox">
+        <h2>Enter your name:</h2>
+        <input type="text" id="nameSelector" placeholder="Enter your name">
+        <input type="submit" id="proceedButton" value="Join Call" onclick="proceed()">
+    </div>
+</body>
+<script>
+    let micOn = true;
+    let videoOn = true;
+
+    let stream;
+
+    async function startPreview() {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            document.getElementById('preview').srcObject = stream;
+        } catch (e) {
+            console.error("Camera error:", e);
+        }
+    }
+
+    startPreview();
+
+    document.getElementById('mic-btn').addEventListener('click', () => {
+        micOn = !micOn;
+        document.getElementById('mic-btn').style.backgroundColor = micOn ? 'gray' : 'salmon';
+        document.getElementById('mic-btn').innerHTML = micOn ? "<img src='icons/micro.png' height='30' width='30'>" : "<img src='icons/mic-off.png' height='30' width='30'>";
+    });
+    document.getElementById('video-btn').addEventListener('click', () => {
+        videoOn = !videoOn;
+        document.getElementById('preview').style.display = videoOn ? 'block' : 'none';
+        document.getElementById('video-btn').style.backgroundColor = videoOn ? 'gray' : 'salmon';
+        document.getElementById('video-btn').innerHTML = videoOn ? "<img src='icons/cam-on.png' height='30' width='30'>" : "<img src='icons/cam-off.png' height='30' width='30'>";
+    });
+    function proceed() {
+        let name = document.getElementById("nameSelector").value;
+        localStorage.setItem('micOn', micOn);
+        localStorage.setItem('videoOn', videoOn);
+        localStorage.setItem('name', name);
+        if (stream) stream.getTracks().forEach(t => t.stop())
+        window.location.href = "room.html";
+    }
+</script>
+</html>

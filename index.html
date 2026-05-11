@@ -3,16 +3,16 @@
 <head>
     <title>FelixVideo</title>
     <style>
-        /* 1. Center everything on the page using the Body */
+        
         body {
             background-color: #222;
             font-family: Sans-serif;
             margin: 0;
-            height: 100vh; /* Full screen height */
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Vertical center */
-            align-items: center;     /* Horizontal center */
+            justify-content: center; 
+            align-items: center;
             color: snow;
         }
         
@@ -66,8 +66,6 @@
     </div>
     
     <div id="menu">
-        <h2>Enter your name:</h2>
-        <input type="text" id="nameSelector" placeholder="Enter your name">
         <h2>Enter the room ID:</h2>
         <input type="text" id="roomSelector" placeholder="Enter the room ID">
         <input type="submit" id="proceedButton" value="Join Call" onclick="proceed()">
@@ -123,7 +121,30 @@
         "When I write something down here, I feel like I did genuine work",
         "I want to get a Renault Twingo and travel all around Africa and Asia one day",
         "Be aware of the didgital footprint!",
-        '"Well folks from Plano Texas told me that my project is cool, so give me the first place already!"'
+        '"Well folks from Plano Texas told me that my project is cool, so give me the first place already!"',
+        "Get in the car, we are leaving this town NOW. Wait! This isn't the car! NOOOOOOO! NOOOOOO! HERMIT PURPLE!",
+        "Happy birthday, Daniel!",
+        "...even if the stairs never end WE ceep climbing!",
+        "Quit your annoying whining!",
+        "At this point... Words are unnecessary!",
+        "Sweet!",
+        "This is what dessert is like!",
+        "I'm full.",
+        "Victory!",
+        "I feel sick... I feel sick... I feel sick... I feel sick... I feel sick...",
+        'Now, raise both arms and shout: "Victory!"',
+        "Nah, I'd win",
+        "Thank you, Chainsaw Man",
+        "My brain trembles!",
+        "Ichigo… I hate the rain.",
+        "Life simply flows.",
+        "Which do you think came first, the soul or the body?",
+        "The key to downhill success isn't power, it's balance.",
+        "No matter how strong the pain is, it's out duty to move forward. You're wrong for running away from reality.",
+        "I dunno what else to add at this point",
+        "This sure took a while.",
+        "Say wallaih bro",
+        "Heh..."
     ]
 
     let random    
@@ -140,12 +161,10 @@
     }
     randomPhrase()
     function proceed() {
-        let name = document.getElementById("nameSelector").value
         let id = document.getElementById("roomSelector").value
         console.log(id)
         localStorage.setItem('id',id)
-        localStorage.setItem('name',name)
-        window.location.href = "room.html"
+        window.location.href = "prep.html"
     }
 </script>
 

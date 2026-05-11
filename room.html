@@ -8,12 +8,12 @@
             background-color: #222;
         }
         #video-container {
-            display: flex;       /* This turns on the flexible layout */
-            flex-wrap: wrap;    /* This allows videos to wrap to the next row ONLY when space runs out */
-            flex-direction: row; /* This forces them to fill left-to-right first */
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
             
-            justify-content: center; /* Centers the videos horizontally */
-            align-content: center;   /* Centers the videos vertically */
+            justify-content: center;
+            align-content: center;
             
             width: 100vw;
             height: 100vh;
@@ -23,19 +23,18 @@
         }
 
         .video-player {
-            /* Ensure there are no margins pushing elements away */
             margin: 0;
             padding: 0;
             box-sizing: border-box; 
             position: relative;
             background-color: #1a1a1a;
-            border: 1px solid #333; /* Optional: adds a small gap between videos */
+            border: 1px solid #333;
         }   
         #action-menu {
             position: fixed;
-            bottom: 20px; /* Distance from the bottom */
+            bottom: 20px; 
             left: 50%;
-            transform: translateX(-50%); /* Offsets the width so the CENTER of the menu is at 50% */
+            transform: translateX(-50%);
             
             /* Your existing styles */
             background: #383838;
@@ -43,13 +42,13 @@
             height: 50px;
             display: flex;
             border-radius: 8px; 
-            z-index: 1000; /* Makes sure it stays on top of video feeds */
+            z-index: 1000;
         }
         #soundList {
             position: fixed;
-            bottom: 80px; /* Distance from the bottom */
+            bottom: 80px; 
             left: 50%;
-            transform: translateX(-50%); /* Offsets the width so the CENTER of the menu is at 50% */
+            transform: translateX(-50%);
             margin-left: -60px;
             justify-content: center;
 
@@ -58,7 +57,7 @@
             height: 50px;
             display: flex;
             border-radius: 8px; 
-            z-index: 1000; /* Makes sure it stays on top of video feeds */
+            z-index: 1000;
             display: none;
             flex-direction: row;
             gap: 10px
@@ -87,7 +86,6 @@
             border: none;
         }
 
-        /* Small floating strip of participant thumbnails shown during screen share */
         #pip-strip {
             display: none;
             position: fixed;
@@ -132,7 +130,7 @@
     <div id="action-menu">
         <button id="mic-btn" class="button"><img src='icons/micro.png' height="30" width="30"></button>
         <button id="video-btn" class="button"><img src='icons/cam-on.png' height="30" width="30"></button>
-        <button id="sound-bar" class="button">Sounds</button>
+        <button id="sound-bar" class="button"><img src='icons/smile.png' height="30" width="30"></button>
         <button id="screen-share-btn" class="button"><img src='icons/screen-share.png' height="30" width="30"></button>
     </div>
     <div id="soundList">

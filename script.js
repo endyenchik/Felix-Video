@@ -7,15 +7,15 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 
+
+
 let localTracks = { audioTrack: null, videoTrack: null };
 let screenTrack = null;
 let screenClient = null;
-let isMicMuted = false;
-let isVideoMuted = false;
+let isMicMuted = localStorage.getItem('micOn') === 'false';
+let isVideoMuted = localStorage.getItem('videoOn') === 'false';
 let isScreenSharing = false;
-let nameMap = {}; // uid -> name
-
-// --- NAME TAGS ---
+let nameMap = {};
 
 function setNameTag(playerEl, name) {
     let tag = playerEl.querySelector('.name-tag');
@@ -57,8 +57,6 @@ async function initPresence() {
             }
         });
 }
-
-// --- UI HELPER FUNCTIONS ---
 
 function updateParticipantCount() {
     const totalPeople = client.remoteUsers.filter(u => u.uid !== 1).length + 1;
@@ -123,7 +121,7 @@ async function toggleMic() {
     const btn = document.getElementById("mic-btn");
     if (isMicMuted) {
         btn.innerHTML = '<img src="icons/mic-off.png" height="30" width="30">';
-        btn.style.backgroundColor = "red";
+        btn.style.backgroundColor = "salmon";
     } else {
         btn.innerHTML = '<img src="icons/micro.png" height="30" width="30">';
         btn.style.backgroundColor = "gray";
@@ -142,14 +140,14 @@ async function toggleVideo() {
 
     if (isVideoMuted) {
         localContainer.innerHTML = '<img src="icons/cam-off.png" height="300" width="300" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.7;">';
-        setNameTag(localContainer, MY_NAME);  // add this
-        btn.innerText = "Start Video";
-        btn.style.backgroundColor = "red";
+        setNameTag(localContainer, MY_NAME);
+        btn.innerHTML = "<img src='icons/cam-off.png' height='30' width='30'>";
+        btn.style.backgroundColor = "salmon";
     } else {
         localContainer.innerHTML = "";
         localTracks.videoTrack.play("local-player");
-        setNameTag(localContainer, MY_NAME);  // already there
-        btn.innerText = "Stop Video";
+        setNameTag(localContainer, MY_NAME);
+        btn.innerHTML = "<img src='icons/cam-on.png' height='30' width='30'>";
         btn.style.backgroundColor = "gray";
     }
 }
@@ -191,7 +189,6 @@ async function toggleScreenShare() {
                 }
             });
 
-            document.getElementById("screen-share-btn").innerText = "Share Screen";
             document.getElementById("screen-share-btn").style.backgroundColor = "gray";
             updateParticipantCount();
         } else {
@@ -220,8 +217,7 @@ async function toggleScreenShare() {
             video.play();
 
             isScreenSharing = true;
-            document.getElementById("screen-share-btn").innerText = "Stop Sharing";
-            document.getElementById("screen-share-btn").style.backgroundColor = "green";
+            document.getElementById("screen-share-btn").style.backgroundColor = "#FFE91B";
 
             rawTrack.onended = async () => {
                 if (isScreenSharing) await toggleScreenShare();
@@ -347,16 +343,31 @@ async function startCall() {
     await client.join(APP_ID, CHANNEL, null);
     [localTracks.audioTrack, localTracks.videoTrack] = await AgoraRTC.createMicrophoneAndCameraTracks();
 
-    localTracks.videoTrack.play("local-player");
-    await client.publish([localTracks.audioTrack, localTracks.videoTrack]);
+    if (isMicMuted) {
+        await localTracks.audioTrack.setMuted(true);
+        const btn = document.getElementById("mic-btn");
+        btn.innerHTML = '<img src="icons/mic-off.png" height="30" width="30">';
+        btn.style.backgroundColor = "salmon";
+    }
 
+    if (isVideoMuted) {
+        await localTracks.videoTrack.setMuted(true);
+        const localContainer = document.getElementById("local-player");
+        localContainer.innerHTML = '<img src="icons/cam-off.png" height="300" width="300" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.7;">';
+        setNameTag(localContainer, MY_NAME);
+        const btn = document.getElementById("video-btn");
+        btn.innerHTML = '<img src="icons/cam-off.png" height="30" width="30">';
+        btn.style.backgroundColor = "salmon";
+    } else {
+        localTracks.videoTrack.play("local-player");
+    }
+
+    await client.publish([localTracks.audioTrack, localTracks.videoTrack]);
     setNameTag(document.getElementById('local-player'), MY_NAME);
 
     await initPresence();
     updateParticipantCount();
 }
-
-// --- INITIALIZATION ---
 
 startCall();
 

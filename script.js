@@ -122,9 +122,11 @@ async function toggleMic() {
     if (isMicMuted) {
         btn.innerHTML = '<img src="icons/mic-off.png" height="30" width="30">';
         btn.style.backgroundColor = "salmon";
+        btn.title = "unmute";
     } else {
         btn.innerHTML = '<img src="icons/micro.png" height="30" width="30">';
         btn.style.backgroundColor = "gray";
+        btn.title = "mute";
     }
 }
 
@@ -143,12 +145,14 @@ async function toggleVideo() {
         setNameTag(localContainer, MY_NAME);
         btn.innerHTML = "<img src='icons/cam-off.png' height='30' width='30'>";
         btn.style.backgroundColor = "salmon";
+        btn.title = "turn on video";
     } else {
         localContainer.innerHTML = "";
         localTracks.videoTrack.play("local-player");
         setNameTag(localContainer, MY_NAME);
         btn.innerHTML = "<img src='icons/cam-on.png' height='30' width='30'>";
         btn.style.backgroundColor = "gray";
+        btn.title = "turn off video";
     }
 }
 
@@ -247,7 +251,6 @@ async function playSound(fileName) {
     }
 }
 
-// --- CORE AGORA LOGIC ---
 
 async function startCall() {
     client.on("user-published", async (user, mediaType) => {
@@ -348,6 +351,7 @@ async function startCall() {
         const btn = document.getElementById("mic-btn");
         btn.innerHTML = '<img src="icons/mic-off.png" height="30" width="30">';
         btn.style.backgroundColor = "salmon";
+        btn.title = "unmute";
     }
 
     if (isVideoMuted) {
@@ -358,6 +362,7 @@ async function startCall() {
         const btn = document.getElementById("video-btn");
         btn.innerHTML = '<img src="icons/cam-off.png" height="30" width="30">';
         btn.style.backgroundColor = "salmon";
+        btn.title = "turn on video";
     } else {
         localTracks.videoTrack.play("local-player");
     }
@@ -369,11 +374,33 @@ async function startCall() {
     updateParticipantCount();
 }
 
+async function leaveCall() {
+    for (let trackName in localTracks) {
+        let track = localTracks[trackName];
+        if (track) {
+            track.stop();
+            track.close();
+            localTracks[trackName] = null;
+        }
+    }
+
+    if (screenTrack) {
+        screenTrack.stop();
+        screenTrack.close();
+        screenTrack = null;
+    }
+
+    await client.leave();
+
+    window.open('/', '_self');
+}
+
 startCall();
 
 document.getElementById("video-btn").onclick = toggleVideo;
 document.getElementById("mic-btn").onclick = toggleMic;
 document.getElementById("screen-share-btn").onclick = toggleScreenShare;
+document.getElementById("leaveCall").onclick = leaveCall;
 
 const soundBtn = document.getElementById("sound-bar");
 if (soundBtn) soundBtn.onclick = showSounds;

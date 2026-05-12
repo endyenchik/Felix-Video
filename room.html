@@ -74,6 +74,11 @@
             margin-top: 5px;
             cursor: pointer;
         }
+        #leaveCall {
+            background-color: salmon;
+            position: absolute;
+            margin-left: 345px
+        }
         #screen-player {
             display: none;
             position: fixed;
@@ -128,20 +133,21 @@
     <div id="pip-strip"></div>
     
     <div id="action-menu">
-        <button id="mic-btn" class="button"><img src='icons/micro.png' height="30" width="30"></button>
-        <button id="video-btn" class="button"><img src='icons/cam-on.png' height="30" width="30"></button>
-        <button id="sound-bar" class="button"><img src='icons/smile.png' height="30" width="30"></button>
-        <button id="screen-share-btn" class="button"><img src='icons/screen-share.png' height="30" width="30"></button>
+        <button id="mic-btn" title="mute" class="button"><img src='icons/micro.png' height="30" width="30"></button>
+        <button id="video-btn" title="video off" class="button"><img src='icons/cam-on.png' height="30" width="30"></button>
+        <button id="sound-bar" title="sound pad" class="button"><img src='icons/smile.png' height="30" width="30"></button>
+        <button id="screen-share-btn" title="screen share" class="button"><img src='icons/screen-share.png' height="30" width="30"></button>
+        <button id="leaveCall" title="quit call" class="button"><img src='icons/exit.png' height="30" width="30"></button>
     </div>
     <div id="soundList">
-        <p onclick="playSound('sfx/train.mp3')">🚆</p>
-        <p onclick="playSound('sfx/poop.mp3')">💩</p>
-        <p onclick="playSound('sfx/meow.mp3')">🐱</p>
-        <p onclick="playSound('sfx/explosion.mp3')">💥</p>
-        <p onclick="playSound('sfx/correct.mp3')">✅</p>
-        <p onclick="playSound('sfx/wrong.mp3')">❌</p>
-        <p onclick="playSound('sfx/hamburger.mp3')">🍔</p>
-        <p onclick="playSound('sfx/door.mp3')">🚪</p>
+        <p title="train" onclick="playSound('sfx/train.mp3')">🚆</p>
+        <p title="poop" onclick="playSound('sfx/poop.mp3')">💩</p>
+        <p title="meow" onclick="playSound('sfx/meow.mp3')">🐱</p>
+        <p title="explosion" onclick="playSound('sfx/explosion.mp3')">💥</p>
+        <p title="correct" onclick="playSound('sfx/correct.mp3')">✅</p>
+        <p title="wrong" onclick="playSound('sfx/wrong.mp3')">❌</p>
+        <p title="hamburger" onclick="playSound('sfx/hamburger.mp3')">🍔</p>
+        <p title="knock" onclick="playSound('sfx/door.mp3')">🚪</p>
     </div>
 
 
